@@ -3496,7 +3496,7 @@
 \def\@date{\today}
 \def\empty@data{\@nil}
 \def\doi#1{\gdef\@doi{#1}}
-\def\doi@base{http://dx.doi.org/}
+\def\doi@base{https://doi.org/}
 \let\@doi\relax
 
 \csuse{\fmt@name @articletype}
