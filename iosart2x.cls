@@ -58,8 +58,8 @@
 %%
 
 \def\fmt@name{iosart2x}
-\def\fmt@date{2018/05/30}
-\def\fmt@version{1.1.27}
+\def\fmt@date{2018/06/22}
+\def\fmt@version{1.1.28}
 \NeedsTeXFormat{LaTeX2e}[2000/01/26]
 \ProvidesClass\fmt@name
               [\fmt@date\space v\fmt@version\space IOS Press]
