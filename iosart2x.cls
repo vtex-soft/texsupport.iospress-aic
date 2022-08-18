@@ -70,8 +70,8 @@
 %%
 
 \def\fmt@name{iosart2x}
-\def\fmt@date{2022/08/08}
-\def\fmt@version{1.3.47}
+\def\fmt@date{2022/08/18}
+\def\fmt@version{1.3.47b}
 \NeedsTeXFormat{LaTeX2e}[2000/01/26]
 \ProvidesClass\fmt@name
               [\fmt@date\space v\fmt@version\space IOS Press]
@@ -869,7 +869,12 @@
   \fi
 \fi
 
-\directlua{%
+\let\vtx@directlua\@gobble
+\ifdefined\directlua
+  \let\vtx@directlua\directlua
+\fi
+
+\vtx@directlua{%
   tab_chr = string.char(9)            % "\t"
   eol_chr = string.char(10)           % "\n"
   cr_chr = string.char(10)            % "\r"
@@ -887,7 +892,7 @@
   \newcount\pdfshellescape
   \pdfshellescape=\@ne
   \if@make@lua@auth@
-    \directlua{%
+    \vtx@directlua{%
       \short@journal_author = {}          % array of authors
                                           % index -- author order number
                                           % value -- record with following fields:
@@ -1357,14 +1362,16 @@
 \normalsize
 
 \ifdefined\HCode
-  \directlua{%
+  \vtx@directlua{%
     utf = require 'utf8ex'
     }%
 \fi
 
+\usepackage{ifpdf}
+
 \ifdefined\HCode
   \def\textzh#1{%
-    \directlua{%
+    \vtx@directlua{%
       local par1 = "#1"
       local wcharr = utf.decode_u8(par1)
       local defcmd = bslash_chr .. 'global' .. bslash_chr .. 'def' .. bslash_chr .. 'txtzh{'
@@ -1384,7 +1391,9 @@
 \else
   \if@ios@loadcjk
     \RequirePackage[no-math]{fontspec}
-    \usepackage{luafonts}
+    \ifpdf\else
+      \usepackage{luafonts}
+    \fi
     \newfontfamily\textzhfamily{SimSun.ttf}
     \def\textzh#1{{\textzhfamily #1}}
     \newfontfamily\textjapanesefamily{MS-PMincho.ttf}
@@ -1392,7 +1401,9 @@
   \fi
   \if@ios@loadcyr
     \RequirePackage[no-math]{fontspec}
-    \usepackage{luafonts}
+    \ifpdf\else
+      \usepackage{luafonts}
+    \fi
     \input hyph-ru.tex
     \newfontfamily\textrussianfamily[
       Extension=.otf,
@@ -3225,7 +3236,7 @@
   \thispagestyle{copyright}%
   \ifnum\ios@journal@layout=5\relax
     \if@make@lua@auth@
-      \directlua{%
+      \vtx@directlua{%
         make_authors()
         }%
     \fi
@@ -3708,7 +3719,7 @@
     \cmd@for@aut@elem{fnmsmd}{\the\c@author}{##1}% for PDF metadata only, which don't have prefix
     \if@make@lua@auth@
       \if .##1.\else
-        \directlua{%
+        \vtx@directlua{%
           \short@journal_author[\the\c@author] = \short@journal_author[\the\c@author] or {} 
           \short@journal_author[\the\c@author].fnms = 'x'
           }%
@@ -3755,7 +3766,7 @@
   \@for\@tempa:=#1\do{%
     \expandafter\add@addressref\expandafter{\@tempa}%
     \if@make@lua@auth@
-      \directlua{%
+      \vtx@directlua{%
         \short@journal_author[\the\c@author] = \short@journal_author[\the\c@author] or {} 
         \short@journal_author[\the\c@author].addrefs = \short@journal_author[\the\c@author].addrefs or {}
         table.insert(\short@journal_author[\the\c@author].addrefs, '\@tempa')
@@ -3765,7 +3776,7 @@
   \let\oldunderscore\_%
   \let\_\textunderscore
   \if@make@lua@auth@
-    \directlua{%
+    \vtx@directlua{%
       \short@journal_author[\the\c@author] = \short@journal_author[\the\c@author] or {} 
       }%
   \fi
@@ -3773,7 +3784,7 @@
   \let\_\oldunderscore
   \if@make@lua@auth@
     \setbox\@tempboxa=\hbox{\@author}%
-    \directlua{%
+    \vtx@directlua{%
       \short@journal_author[\the\c@author] = \short@journal_author[\the\c@author] or {} 
       % \short@journal_author[\the\c@author].locnotes = '\the\t@loc@notes'
       \short@journal_author[\the\c@author].eads = '\the\ead@labels'
@@ -3781,7 +3792,7 @@
     %
     \def\thanks##1{%
       \if .##1.\else
-        \directlua{%
+        \vtx@directlua{%
           \short@journal_author[\the\c@author] = \short@journal_author[\the\c@author] or {} 
           \short@journal_author[\the\c@author].thanks = 'x'
           }%
@@ -3940,7 +3951,7 @@
   }
 
 \if@make@lua@auth@
-  \directlua{%
+  \vtx@directlua{%
     % array length
     if (not table.getn) then
       table.getn = function(tab)
@@ -4117,7 +4128,7 @@
     \cmd@for@elem{raw}{\the\c@address}{address}{#2}%
     \proc@elem{address}{#2}%
     \setbox\@tempboxa=\vbox{\@address}%
-    \directlua{%
+    \vtx@directlua{%
       \short@journal_address[\the\c@address] = \short@journal_address[\the\c@address] or {} 
       \short@journal_address[\the\c@address].addref = '#1'
       % \short@journal_address[\the\c@address].locnotes = '\the\t@loc@notes'
